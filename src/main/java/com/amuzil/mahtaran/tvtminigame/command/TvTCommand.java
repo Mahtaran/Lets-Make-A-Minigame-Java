@@ -1,7 +1,8 @@
 package com.amuzil.mahtaran.tvtminigame.command;
 
-import com.alexlew.gameapi.types.Game;
-import com.alexlew.gameapi.types.Team;
+import com.amuzil.mahtaran.minigame.Game;
+import com.amuzil.mahtaran.minigame.MahtGames;
+import com.amuzil.mahtaran.minigame.Team;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -31,32 +32,33 @@ public class TvTCommand implements CommandExecutor, TabCompleter {
 		Player player = (Player) sender;
 		if (args.length == 1) {
 			if (args[0].equalsIgnoreCase("create")) {
-				if (Game.getGames().containsKey(GAME_NAME)) {
+				if (MahtGames.exists(GAME_NAME)) {
 					sendMessage(player, "&cThe event has already been created!");
 					return true;
 				} else {
-					Game game = new Game(GAME_NAME);
-					game.setWorld(player.getWorld());
+					Game game = MahtGames.create(GAME_NAME);
+					if (game == null) {
+						sendMessage(player, "&cAn unknown error occurred!");
+						return true;
+					}
 					game.setLobby(lobby);
 
-					Team blue = new Team("blue", game);
-					blue.setMinPlayer(1);
-					blue.setMaxPlayer(30);
+					Team blue = game.createTeam("blue");
+					blue.setMinPlayers(1);
+					blue.setMaxPlayers(30);
 					blue.setSpawn(blueSpawn);
-					game.addTeam(blue);
 
-					Team red = new Team("red", game);
-					red.setMinPlayer(1);
-					red.setMaxPlayer(30);
+					Team red = game.createTeam("red");
+					red.setMinPlayers(1);
+					red.setMaxPlayers(30);
 					red.setSpawn(redSpawn);
-					game.addTeam(red);
 
 					sendMessage(player, "&6The event has been created!");
 					return true;
 				}
 			} else if (args[0].equalsIgnoreCase("start")) {
-				if (Game.getGames().containsKey(GAME_NAME)) {
-					Game.getGames().get(GAME_NAME).start();
+				if (MahtGames.exists(GAME_NAME)) {
+					MahtGames.start(GAME_NAME);
 					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&6Team vs Team event started!"));
 					return true;
 				} else {
@@ -64,9 +66,9 @@ public class TvTCommand implements CommandExecutor, TabCompleter {
 					return true;
 				}
 			} else if (args[0].equalsIgnoreCase("stop")) {
-				if (Game.getGames().containsKey(GAME_NAME)) {
-					Game.getGames().get(GAME_NAME).stop();
-					Game.getGames().get(GAME_NAME).delete();
+				if (MahtGames.exists(GAME_NAME)) {
+					MahtGames.stop(GAME_NAME);
+					MahtGames.delete(GAME_NAME);
 					sendMessage(player, "&aThe game has been stopped!");
 					return true;
 				} else {
@@ -83,23 +85,23 @@ public class TvTCommand implements CommandExecutor, TabCompleter {
 				} else if (args.length == 3 && args[1].equalsIgnoreCase("spawn")) {
 					if (args[2].equalsIgnoreCase("blue")) {
 						blueSpawn = player.getLocation();
-						sendMessage(player, String.format("&aBlue spawn position set to &b(%.2f, %.2f, %.2f)", blueSpawn.getX(), blueSpawn.getY(), blueSpawn.getZ()));
+						sendMessage(player, String.format("&9Blue&a spawn position set to &b(%.2f, %.2f, %.2f)", blueSpawn.getX(), blueSpawn.getY(), blueSpawn.getZ()));
 						return true;
 					} else if (args[2].equalsIgnoreCase("red")) {
 						redSpawn = player.getLocation();
-						sendMessage(player, String.format("&aRed spawn position set to &b(%.2f, %.2f, %.2f)", redSpawn.getX(), redSpawn.getY(), redSpawn.getZ()));
+						sendMessage(player, String.format("&cRed&a spawn position set to &b(%.2f, %.2f, %.2f)", redSpawn.getX(), redSpawn.getY(), redSpawn.getZ()));
 						return true;
 					}
 				}
 			} else if (args[0].equalsIgnoreCase("join")) {
 				if (args.length == 2) {
 					if (args[1].equalsIgnoreCase("blue")) {
-						Game.getGames().get(GAME_NAME).addPlayer(player);
-						Game.getGames().get(GAME_NAME).getTeam("blue").addPlayer(player);
+						MahtGames.join(GAME_NAME, player, "blue");
+						sendMessage(player, "&aJoined the &9blue&a team!");
 						return true;
 					} else if (args[1].equalsIgnoreCase("red")) {
-						Game.getGames().get(GAME_NAME).addPlayer(player);
-						Game.getGames().get(GAME_NAME).getTeam("red").addPlayer(player);
+						MahtGames.join(GAME_NAME, player, "red");
+						sendMessage(player, "&aJoined the &cred&a team!");
 						return true;
 					}
 				}
