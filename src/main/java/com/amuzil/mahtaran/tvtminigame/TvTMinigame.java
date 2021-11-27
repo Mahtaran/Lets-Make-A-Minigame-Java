@@ -10,8 +10,9 @@ public final class TvTMinigame extends JavaPlugin {
 		// Plugin startup logic
 		PluginCommand tvt = getCommand("teamvsteam");
 		if (tvt != null) {
-			tvt.setExecutor(new TvTCommand());
-			tvt.setTabCompleter(new TvTCommand());
+			TvTCommand executor = new TvTCommand();
+			tvt.setExecutor(executor);
+			tvt.setTabCompleter(executor);
 		}
 	}
 

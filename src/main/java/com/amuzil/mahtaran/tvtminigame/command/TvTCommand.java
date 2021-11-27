@@ -25,14 +25,14 @@ public class TvTCommand implements CommandExecutor, TabCompleter {
 	@Override
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
 		if (!(sender instanceof Player)) {
-			sendMessage(sender, "Only players can use this command.");
+			sendMessage(sender, "&cOnly players can use this command.");
 			return true;
 		}
 		Player player = (Player) sender;
 		if (args.length == 1) {
 			if (args[0].equalsIgnoreCase("create")) {
 				if (Game.getGames().containsKey(GAME_NAME)) {
-					sendMessage(player, "§cThe event has already been created!");
+					sendMessage(player, "&cThe event has already been created!");
 					return true;
 				} else {
 					Game game = new Game(GAME_NAME);
@@ -74,36 +74,43 @@ public class TvTCommand implements CommandExecutor, TabCompleter {
 					return true;
 				}
 			}
-		} else if (args[0].equalsIgnoreCase("set")) {
-			if (args.length == 2 && args[1].equalsIgnoreCase("lobby")) {
-				lobby = player.getLocation();
-				sendMessage(player, String.format("&aLobby position set to &b(%.2f, %.2f, %.2f)", lobby.getX(), lobby.getY(), lobby.getZ()));
-				return true;
-			} else if (args.length == 3 && args[1].equalsIgnoreCase("spawn")) {
-				if (args[2].equalsIgnoreCase("blue")) {
-					blueSpawn = player.getLocation();
-					sendMessage(player, String.format("&aBlue spawn position set to &b(%.2f, %.2f, %.2f)", blueSpawn.getX(), blueSpawn.getY(), blueSpawn.getZ()));
+		} else if (args.length >= 2) {
+			if (args[0].equalsIgnoreCase("set")) {
+				if (args.length == 2 && args[1].equalsIgnoreCase("lobby")) {
+					lobby = player.getLocation();
+					sendMessage(player, String.format("&aLobby position set to &b(%.2f, %.2f, %.2f)", lobby.getX(), lobby.getY(), lobby.getZ()));
 					return true;
-				} else if (args[2].equalsIgnoreCase("red")) {
-					redSpawn = player.getLocation();
-					sendMessage(player, String.format("&aRed spawn position set to &b(%.2f, %.2f, %.2f)", redSpawn.getX(), redSpawn.getY(), redSpawn.getZ()));
-					return true;
+				} else if (args.length == 3 && args[1].equalsIgnoreCase("spawn")) {
+					if (args[2].equalsIgnoreCase("blue")) {
+						blueSpawn = player.getLocation();
+						sendMessage(player, String.format("&aBlue spawn position set to &b(%.2f, %.2f, %.2f)", blueSpawn.getX(), blueSpawn.getY(), blueSpawn.getZ()));
+						return true;
+					} else if (args[2].equalsIgnoreCase("red")) {
+						redSpawn = player.getLocation();
+						sendMessage(player, String.format("&aRed spawn position set to &b(%.2f, %.2f, %.2f)", redSpawn.getX(), redSpawn.getY(), redSpawn.getZ()));
+						return true;
+					}
 				}
-			}
-		} else if (args[0].equalsIgnoreCase("join")) {
-			if (args.length == 2) {
-				if (args[1].equalsIgnoreCase("blue")) {
-					Game.getGames().get(GAME_NAME).addPlayer(player);
-					Game.getGames().get(GAME_NAME).getTeam("blue").addPlayer(player);
-					return true;
-				} else if (args[1].equalsIgnoreCase("red")) {
-					Game.getGames().get(GAME_NAME).addPlayer(player);
-					Game.getGames().get(GAME_NAME).getTeam("red").addPlayer(player);
-					return true;
+			} else if (args[0].equalsIgnoreCase("join")) {
+				if (args.length == 2) {
+					if (args[1].equalsIgnoreCase("blue")) {
+						Game.getGames().get(GAME_NAME).addPlayer(player);
+						Game.getGames().get(GAME_NAME).getTeam("blue").addPlayer(player);
+						return true;
+					} else if (args[1].equalsIgnoreCase("red")) {
+						Game.getGames().get(GAME_NAME).addPlayer(player);
+						Game.getGames().get(GAME_NAME).getTeam("red").addPlayer(player);
+						return true;
+					}
 				}
 			}
 		}
-		return false;
+		sendHelp(sender, alias, args);
+		return true;
+	}
+
+	private void sendMessage(CommandSender receiver, String message) {
+		receiver.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
 	}
 
 	@Override
@@ -128,15 +135,50 @@ public class TvTCommand implements CommandExecutor, TabCompleter {
 		return result;
 	}
 
+	public void sendHelp(CommandSender receiver, String alias, String[] args) {
+		String helpMessage = "/%s [create|start|stop|set|join]";
+		if (args.length >= 1) {
+			if (args[0].equalsIgnoreCase("create")) {
+				helpMessage = "/%s create";
+			} else if (args[0].equalsIgnoreCase("start")) {
+				helpMessage = "/%s start";
+			} else if (args[0].equalsIgnoreCase("stop")) {
+				helpMessage = "/%s stop";
+			} else if (args[0].equalsIgnoreCase("set")) {
+				helpMessage = "/%s set [lobby|spawn]";
+				if (args.length >= 2) {
+					if (args[1].equalsIgnoreCase("lobby")) {
+						helpMessage = "/%s set lobby";
+					} else if (args[1].equalsIgnoreCase("spawn")) {
+						helpMessage = "/%s set spawn [blue|red]";
+						if (args.length >= 3) {
+							if (args[2].equalsIgnoreCase("blue")) {
+								helpMessage = "/%s set spawn blue";
+							} else if (args[2].equalsIgnoreCase("red")) {
+								helpMessage = "/%s set spawn red";
+							}
+						}
+					}
+				}
+			} else if (args[0].equalsIgnoreCase("join")) {
+				helpMessage = "/%s join [blue|red]";
+				if (args.length >= 2) {
+					if (args[1].equalsIgnoreCase("blue")) {
+						helpMessage = "/%s join blue";
+					} else if (args[1].equalsIgnoreCase("red")) {
+						helpMessage = "/%s join red";
+					}
+				}
+			}
+		}
+		sendMessage(receiver, "&cIncorrect usage; try " + String.format(helpMessage, alias));
+	}
+
 	public void addCompletions(List<String> completions, String argument, String... possibleCompletions) {
 		for (String completion : possibleCompletions) {
 			if (completion.toLowerCase().startsWith(argument.toLowerCase())) {
 				completions.add(completion);
 			}
 		}
-	}
-
-	public void sendMessage(CommandSender receiver, String message) {
-		receiver.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
 	}
 }

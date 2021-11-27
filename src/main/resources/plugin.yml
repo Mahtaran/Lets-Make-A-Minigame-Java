@@ -10,7 +10,7 @@ commands:
     description: "Main Team vs Team command"
     aliases: [ tvt ]
     permission: "tvt.command"
-    usage: "Usage: /<command> [create|start|stop|set|join]"
+    usage: "/<command> [create|start|stop|set|join]"
 permissions:
   tvt.command:
     description: "Allows the user to use the Team vs Team command"
