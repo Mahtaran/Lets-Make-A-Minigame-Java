@@ -1,0 +1,42 @@
+name: "TvTMinigame"
+version: "${version}"
+main: com.amuzil.mahtaran.tvtminigame.TvTMinigame
+api-version: 1.17
+authors: [ Mahtaran ]
+depend:
+  - GameAPI
+commands:
+  teamvsteam:
+    description: "Main Team vs Team command"
+    aliases: [ tvt ]
+    permission: "tvt.command"
+    usage: "Usage: /<command> [create|start|stop|set|join]"
+permissions:
+  tvt.command:
+    description: "Allows the user to use the Team vs Team command"
+    default: true
+  tvt.command.create:
+    description: "Allows the user to create a Team vs Team game"
+    default: op
+  tvt.command.start:
+    description: "Allows the user to start a Team vs Team game"
+    default: op
+  tvt.command.stop:
+    description: "Allows the user to stop a Team vs Team game"
+    default: op
+  tvt.command.set:
+    description: "Allows the user to change settings of a Team vs Team game"
+    default: op
+  tvt.command.join:
+    description: "Allows the user to join a Team vs Team game"
+    default: op
+  tvt.command.*:
+    description: "Allows the user to use all Team vs Team commands"
+    default: op
+    children:
+      tvt.command: true
+      tvt.command.create: true
+      tvt.command.start: true
+      tvt.command.stop: true
+      tvt.command.set: true
+      tvt.command.join: true
