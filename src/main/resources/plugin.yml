@@ -3,6 +3,8 @@ version: "${version}"
 main: com.amuzil.mahtaran.tvtminigame.TvTMinigame
 api-version: 1.17
 authors: [ Mahtaran ]
+softdepend:
+  - Skript
 commands:
   teamvsteam:
     description: "Main Team vs Team command"

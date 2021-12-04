@@ -1,0 +1,9 @@
+group: "com.amuzil.mahtaran"
+version: "0.0.1-alpha"
+publishing:
+  repo:
+    name: "<your repository name>"
+    url: "<your repository url>"
+    credentials:
+      username: "<username>"
+      password: "<password>"

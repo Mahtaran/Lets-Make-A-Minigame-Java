@@ -1,12 +1,31 @@
-plugins {
-	id "java"
+import org.yaml.snakeyaml.Yaml
+
+buildscript {
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath "org.yaml:snakeyaml:1.+"
+	}
 }
 
-group = "com.amuzil.mahtaran"
-version = "0.0.1-alpha"
+plugins {
+	id "java"
+	id "maven-publish"
+	//id "com.github.hierynomus.license" version "0.+"
+}
+
+def config = new Yaml().load(new FileInputStream("config.yml"))
+
+group = config.group
+version = config.version
 
 repositories {
 	mavenCentral()
+	maven {
+		name = "amuzil"
+		url = "https://repo.amuzil.com/artifactory/release/"
+	}
 	maven {
 		name = "spigotmc"
 		url = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/"
@@ -15,12 +34,21 @@ repositories {
 		name = "sonatype"
 		url = "https://oss.sonatype.org/content/groups/public/"
 	}
+	maven {
+		name = "destroystokyo"
+		url = "https://repo.destroystokyo.com/repository/maven-public/"
+	}
+	maven {
+		name = "jitpack"
+		url = "https://jitpack.io"
+	}
 }
 
 dependencies {
 	compileOnly fileTree("lib")
 	compileOnly "org.spigotmc:spigot-api:1.17.1-R0.1-SNAPSHOT"
-	compileOnly "org.jetbrains:annotations:16.0.2"
+	compileOnly 'org.jetbrains:annotations:22.0.0'
+	compileOnly "com.amuzil.mahtaran:mahtgames:0.+"
 }
 
 def targetJavaVersion = 8
@@ -45,5 +73,42 @@ processResources {
 	filteringCharset "UTF-8"
 	filesMatching("plugin.yml") {
 		expand props
+	}
+}
+
+task sourceJar(type: Jar) {
+	from sourceSets.main.allJava
+	archiveClassifier.value "sources"
+}
+
+//license {
+//	mapping "java", "SLASHSTAR_STYLE"
+//	header file("license-header.txt")
+//	include "**/*.java"
+//	exclude "**/EffectSection.java" // From GameAPI
+//	exclude "**/LazyEffectSection.java" // From GameAPI
+//	exclude "**/ReflcetionUtils.java" // From GameAPI
+//}
+
+publishing {
+	repositories {
+		maven {
+			name = config.publishing.repo.name
+			url = config.publishing.repo.url
+			credentials {
+				username = config.publishing.repo.credentials.username
+				password = config.publishing.repo.credentials.password
+			}
+		}
+	}
+	publications {
+		maven(MavenPublication) {
+			groupId = project.group
+			artifactId = project.name
+			version = project.version
+
+			artifact sourceJar
+			artifact tasks.jar
+		}
 	}
 }

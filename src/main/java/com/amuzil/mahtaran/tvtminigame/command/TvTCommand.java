@@ -1,8 +1,8 @@
 package com.amuzil.mahtaran.tvtminigame.command;
 
-import com.amuzil.mahtaran.minigame.Game;
-import com.amuzil.mahtaran.minigame.MahtGames;
-import com.amuzil.mahtaran.minigame.Team;
+import com.amuzil.mahtaran.mahtgames.Game;
+import com.amuzil.mahtaran.mahtgames.MahtGames;
+import com.amuzil.mahtaran.mahtgames.Team;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
