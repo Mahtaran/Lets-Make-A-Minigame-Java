@@ -3,6 +3,7 @@ package com.amuzil.mahtaran.tvtminigame.command;
 import com.amuzil.mahtaran.mahtgames.Game;
 import com.amuzil.mahtaran.mahtgames.MahtGames;
 import com.amuzil.mahtaran.mahtgames.Team;
+import com.amuzil.mahtaran.tvtminigame.TvTMinigame;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -18,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TvTCommand implements CommandExecutor, TabCompleter {
-	private static final String GAME_NAME = "teamvsteam";
 	private Location lobby;
 	private Location blueSpawn;
 	private Location redSpawn;
@@ -32,11 +32,11 @@ public class TvTCommand implements CommandExecutor, TabCompleter {
 		Player player = (Player) sender;
 		if (args.length == 1) {
 			if (args[0].equalsIgnoreCase("create")) {
-				if (MahtGames.exists(GAME_NAME)) {
+				if (MahtGames.exists(TvTMinigame.GAME_NAME)) {
 					sendMessage(player, "&cThe event has already been created!");
 					return true;
 				} else {
-					Game game = MahtGames.create(GAME_NAME);
+					Game game = MahtGames.create(TvTMinigame.GAME_NAME);
 					if (game == null) {
 						sendMessage(player, "&cAn unknown error occurred!");
 						return true;
@@ -57,8 +57,8 @@ public class TvTCommand implements CommandExecutor, TabCompleter {
 					return true;
 				}
 			} else if (args[0].equalsIgnoreCase("start")) {
-				if (MahtGames.exists(GAME_NAME)) {
-					MahtGames.start(GAME_NAME);
+				if (MahtGames.exists(TvTMinigame.GAME_NAME)) {
+					MahtGames.start(TvTMinigame.GAME_NAME);
 					Bukkit.broadcastMessage(ChatColor.translateAlternateColorCodes('&', "&6Team vs Team event started!"));
 					return true;
 				} else {
@@ -66,9 +66,9 @@ public class TvTCommand implements CommandExecutor, TabCompleter {
 					return true;
 				}
 			} else if (args[0].equalsIgnoreCase("stop")) {
-				if (MahtGames.exists(GAME_NAME)) {
-					MahtGames.stop(GAME_NAME);
-					MahtGames.delete(GAME_NAME);
+				if (MahtGames.exists(TvTMinigame.GAME_NAME)) {
+					MahtGames.stop(TvTMinigame.GAME_NAME);
+					MahtGames.delete(TvTMinigame.GAME_NAME);
 					sendMessage(player, "&aThe game has been stopped!");
 					return true;
 				} else {
@@ -96,11 +96,11 @@ public class TvTCommand implements CommandExecutor, TabCompleter {
 			} else if (args[0].equalsIgnoreCase("join")) {
 				if (args.length == 2) {
 					if (args[1].equalsIgnoreCase("blue")) {
-						MahtGames.join(GAME_NAME, player, "blue");
+						MahtGames.join(TvTMinigame.GAME_NAME, player, "blue");
 						sendMessage(player, "&aJoined the &9blue&a team!");
 						return true;
 					} else if (args[1].equalsIgnoreCase("red")) {
-						MahtGames.join(GAME_NAME, player, "red");
+						MahtGames.join(TvTMinigame.GAME_NAME, player, "red");
 						sendMessage(player, "&aJoined the &cred&a team!");
 						return true;
 					}
