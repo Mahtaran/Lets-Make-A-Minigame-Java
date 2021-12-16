@@ -8,6 +8,7 @@ import static org.bukkit.Bukkit.getPluginManager;
 
 public final class TvTMinigame extends JavaPlugin {
 	public static final String GAME_NAME = "teamvsteam";
+	public static final int MAX_POINTS = 3;
 	private static TvTMinigame instance;
 
 	public static TvTMinigame getInstance() {
